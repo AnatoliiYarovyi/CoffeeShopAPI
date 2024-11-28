@@ -4,6 +4,7 @@ using CoffeeShopAPI.BusinessLogic.Contracts;
 using CoffeeShopAPI.BusinessLogic.Services;
 using CoffeeShopAPI.BusinessLogic.Decorators;
 using Scrutor;
+using CoffeeShopAPI.BusinessLogic.Commands;
 
 namespace CoffeeShopAPI.BusinessLogic.Installers
 {
@@ -14,8 +15,9 @@ namespace CoffeeShopAPI.BusinessLogic.Installers
             services
                 .AddScoped<ICustomersService, CustomersService>()
                 .Decorate<ICustomersService, LoggingCustomerServiceDecorator>()
-                .AddScoped<ICustomerFactory, RegularCustomerFactory>()
-                .AddScoped<ICustomerFactory, PremiumCustomerFactory>();
+                .AddScoped<IRegularCustomerFactory, RegularCustomerFactory>()
+                .AddScoped<IPremiumCustomerFactory, PremiumCustomerFactory>()
+                .AddScoped<ICommandHandler, CommandHandler>();
 
             return services;
         }

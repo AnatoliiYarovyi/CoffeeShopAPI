@@ -7,4 +7,7 @@ namespace CoffeeShopAPI.BusinessLogic.CustomerFactoryMethod
     {
         CustomerDto CreateCustomer(string name, string email);
     }
+
+    public interface IRegularCustomerFactory : ICustomerFactory { }
+    public interface IPremiumCustomerFactory : ICustomerFactory { }
 }

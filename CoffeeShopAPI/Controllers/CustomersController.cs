@@ -2,6 +2,7 @@
 using CoffeeShopAPI.BusinessLogic.Contracts;
 using CoffeeShopAPI.Models.Customers;
 using CoffeeShopAPI.BusinessLogic.Dtos;
+using CoffeeShopAPI.BusinessLogic.Commands;
 
 namespace CoffeeShopAPI.Controllers
 {
@@ -11,11 +12,13 @@ namespace CoffeeShopAPI.Controllers
     {
         private readonly ILogger<CustomersController> _logger;
         private readonly ICustomersService _customersService;
+        private readonly ICommandHandler _commandHandler;
 
-        public CustomersController(ILogger<CustomersController> logger, ICustomersService customersService)
+        public CustomersController(ILogger<CustomersController> logger, ICustomersService customersService, ICommandHandler commandHandler)
         {
             _logger = logger;
             _customersService = customersService;
+            _commandHandler = commandHandler;
         }
 
         [HttpGet("get", Name = "GetCustomers")]
@@ -55,6 +58,21 @@ namespace CoffeeShopAPI.Controllers
             {
                 var customer = await _customersService.CreateCustomer(request.Type, request.Name, request.Email);
                 return Ok(customer);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("create-by-comand")]
+        public async Task<ActionResult<CustomerDto>> CreateCustomerByComand([FromBody] CreateCustomerRequest request)
+        {
+            try
+            {
+                var command = new CreateCustomerCommand(_customersService, request.Type, request.Name, request.Email);
+                await _commandHandler.HandleAsync(command);
+                return Ok();
             }
             catch (Exception ex)
             {
